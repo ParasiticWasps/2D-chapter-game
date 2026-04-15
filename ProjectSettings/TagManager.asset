@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Background
+  - Layer1_Characters
+  - Layer2_Interactive
+  - Layer3_Heroine
+  - Layer4_UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 35745767
+    locked: 0
+  - name: Layer1_Characters
+    uniqueID: 3608409911
+    locked: 0
+  - name: Layer2_Interactive
+    uniqueID: 804025295
+    locked: 0
+  - name: Layer3_Heroine
+    uniqueID: 2467634389
+    locked: 0
+  - name: Layer4_UI
+    uniqueID: 3125391561
+    locked: 0
+  - name: Other
+    uniqueID: 1983197471
+    locked: 0
+  - name: NPC_Characters
+    uniqueID: 1206585451
+    locked: 0
+  - name: Chat_UI
+    uniqueID: 753764361
+    locked: 0
