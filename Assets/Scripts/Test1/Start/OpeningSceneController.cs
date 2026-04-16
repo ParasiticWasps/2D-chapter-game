@@ -244,6 +244,10 @@ public class OpeningSceneController : MonoBehaviour
            // audioSource.clip = innerMonologueClip;
             yield return StartCoroutine(TypeInnerMonologue(innerMonologueLine));
         }
+        else
+        {
+            innerMonologueText.gameObject.SetActive(false);
+        }
 
         // 启用玩家移动
         if (playerController != null)
