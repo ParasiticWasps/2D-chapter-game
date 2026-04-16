@@ -7,6 +7,7 @@ public class SwingInteraction : MonoBehaviour
     public SwingAnimation swingAnimation;
     public LaughSoundController laughSound;
     public GameObject 印玺公Prefab;
+    private Animator 印玺公Animator;
     public PlayerController playerController;
 
     [Header("场景引用")]
@@ -208,6 +209,8 @@ public class SwingInteraction : MonoBehaviour
         {
             印玺公Instance = Instantiate(印玺公Prefab, 印玺公出现位置, Quaternion.identity);
 
+            印玺公Animator = 印玺公Instance.GetComponent<Animator>();
+
             SpriteRenderer renderer = 印玺公Instance.GetComponent<SpriteRenderer>();
             if (renderer != null)
             {
@@ -243,7 +246,7 @@ public class SwingInteraction : MonoBehaviour
 
         // 5. 印玺公移动到秋千附近
         Debug.Log("印玺公移动到秋千");
-        if (印玺公Instance != null)
+        if (印玺公Instance != null && 印玺公Animator != null)
         {
             yield return StartCoroutine(Move印玺公ToPosition(印玺公Instance, 印玺公移动目标位置));
         }
@@ -253,8 +256,10 @@ public class SwingInteraction : MonoBehaviour
 
         // 7. 印玺公说话
         Debug.Log("印玺公说话");
-        if (DialogManager.Instance != null && 印玺公Instance != null)
+        if (DialogManager.Instance != null && 印玺公Instance != null && 印玺公Animator != null)
         {
+            印玺公Animator.SetBool("isMoving", false);
+            印玺公Animator.SetTrigger("Talk");
             DialogManager.Instance.ShowDialog(印玺公Dialog, null);
         }
 
@@ -262,7 +267,7 @@ public class SwingInteraction : MonoBehaviour
 
         // 8. 印玺公离开并渐隐
         Debug.Log("印玺公离开");
-        if (印玺公Instance != null)
+        if (印玺公Instance != null && 印玺公Animator != null)
         {
             Vector3 leavePosition = 印玺公Instance.transform.position + 印玺公离开方向;
             yield return StartCoroutine(MoveAndFade印玺公(印玺公Instance, leavePosition));
@@ -488,6 +493,7 @@ public class SwingInteraction : MonoBehaviour
     // 印玺公移动协程
     System.Collections.IEnumerator Move印玺公ToPosition(GameObject 印玺公, Vector3 targetPos)
     {
+        印玺公Animator.SetBool("isMoving", true);
         float elapsed = 0f;
         Vector3 startPos = 印玺公.transform.position;
         float distance = Vector3.Distance(startPos, targetPos);
@@ -502,11 +508,13 @@ public class SwingInteraction : MonoBehaviour
         }
 
         印玺公.transform.position = targetPos;
+        印玺公Animator.SetBool("isMoving", false);
     }
 
     // 印玺公移动并渐隐
     System.Collections.IEnumerator MoveAndFade印玺公(GameObject 印玺公, Vector3 targetPos)
     {
+        印玺公Animator.SetBool("isMoving", true);
         float elapsed = 0f;
         Vector3 startPos = 印玺公.transform.position;
         SpriteRenderer renderer = 印玺公.GetComponent<SpriteRenderer>();
