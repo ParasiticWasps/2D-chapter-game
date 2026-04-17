@@ -2,12 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class ChapterEndController : MonoBehaviour
 {
     [Header("UI组件")]
     public Image blackScreen;           // 黑屏遮罩
-    public Text endingText;             // 结尾文字
+    public TextMeshProUGUI endingText;             // 结尾文字
 
     [Header("音频设置")]
     public AudioSource audioSource;     // 音频源
@@ -173,7 +174,7 @@ public class ChapterEndController : MonoBehaviour
             yield return StartCoroutine(FadeScreen(1, 0, 1f));
 
             // 加载下一场景
-            SceneManager.LoadScene(nextSceneName);
+            SceneManager.LoadSceneAsync(1);
         }
     }
 

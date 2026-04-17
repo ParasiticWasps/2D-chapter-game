@@ -6,8 +6,8 @@ public class SwingInteraction : MonoBehaviour
     [Header("组件引用")]
     public SwingAnimation swingAnimation;
     public LaughSoundController laughSound;
-    public GameObject 印玺公Prefab;
-    private Animator 印玺公Animator;
+    public GameObject  印玺公Prefab;
+    private Animator   印玺公Animator;
     public PlayerController playerController;
 
     [Header("场景引用")]
@@ -301,7 +301,8 @@ public class SwingInteraction : MonoBehaviour
 
         if (DialogManager.Instance != null)
         {
-            DialogManager.Instance.ShowDialog(finalMonologue, () => {
+            DialogManager.Instance.ShowDialog(finalMonologue, () =>
+            {
                 if (chapterEndController != null)
                 {
                     chapterEndController.StartChapterEnd();

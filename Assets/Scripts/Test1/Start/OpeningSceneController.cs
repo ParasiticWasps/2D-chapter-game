@@ -2,15 +2,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Events;
+using TMPro;
 
 public class OpeningSceneController : MonoBehaviour
 {
     [Header("UI组件")]
     public Image blackScreen;           // 黑屏遮罩
-    public Text narrationText;          // 旁白文本
-    public Text clickHintText;          // 点击提示文本
+    public TextMeshProUGUI narrationText;          // 旁白文本
+    public TextMeshProUGUI clickHintText;          // 点击提示文本
     public GameObject exploreUI;        // 探索界面（包含背景和内心独白）
-    public Text innerMonologueText;     // 内心独白文本
+    public TextMeshProUGUI innerMonologueText;     // 内心独白文本
     public Image backgroundImage;       // 春晓图背景图片
 
     [Header("角色控制")]
