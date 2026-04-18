@@ -9,7 +9,7 @@ public class DialogManager : MonoBehaviour
 
     [Header("UI组件")]
     public GameObject dialogPanel;
-    public Text dialogText;
+    public TextMeshProUGUI dialogText;
     public GameObject optionsContainer;
     public GameObject optionButtonPrefab;
 
