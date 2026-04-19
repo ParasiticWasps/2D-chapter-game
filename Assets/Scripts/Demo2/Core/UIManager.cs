@@ -5,6 +5,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public sealed class UIManager : MonoBehaviour
@@ -21,6 +22,18 @@ public sealed class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _narrText;
     [SerializeField] private float           _intervalBlurDuration = 3.0f;
 
+    // —— ‘刮掉’图层，交互UI
+    [SerializeField] private List<Image> _layerImgs = new List<Image>();
+    [SerializeField] private Image       _maskImg;
+    [SerializeField] private Image       _scratchBlurImg;
+    [SerializeField] private GameObject  _fakeLayer; // 虚假的图层
+    private int                          _currLayerIndex = 0;
+    private int                          _scratchCount   = 0;
+
+    // —— 私有通用成员 ——
+    private const float _fadeMinVlue = 0.0f;
+    private const float _fadeMaxVlue = 1.0f;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(Instance); return; }
@@ -31,8 +44,14 @@ public sealed class UIManager : MonoBehaviour
 
     private void InitializeGui()
     {
-        _endMaskImg?.DOFade(0.0f, 0.0f).OnComplete(() => _endMaskImg.gameObject.SetActive(false));
-        _blurImage?.DOFade(0.0f, 0.0f);
+        _maskImg?.DOFade(_fadeMinVlue, 0.0f);
+        _endMaskImg?.DOFade(_fadeMinVlue, 0.0f).OnComplete(() => _endMaskImg.gameObject.SetActive(false));
+        _blurImage?.DOFade(_fadeMinVlue, 0.0f);
+        _scratchBlurImg?.DOFade(_fadeMinVlue, 0.0f);
+        foreach (var img in _layerImgs)
+        {
+            img?.DOFade(_fadeMinVlue, 0.0f);
+        }
 
         _endText.text  = string.Empty;
         _narrText.text = string.Empty;
@@ -109,6 +128,9 @@ public sealed class UIManager : MonoBehaviour
             // 解除玩家移动
             if (gameState) gameState.SetState(GameState.Normal);
         }
+
+        // 执行刮开图层的交互
+        StartCoroutine(ScratchOffInteraction());
     }
 
     private IEnumerator StartBlurFadeIn()
@@ -135,7 +157,62 @@ public sealed class UIManager : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
 
         // 等待玩家点击屏幕开始下一段旁白
-        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+        // yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+    }
+
+    // ════════════════════════════════════════════════════
+    //  刮开图层，交互UI
+    // ════════════════════════════════════════════════════
+    private IEnumerator ScratchOffInteraction()
+    {
+        yield return new WaitForSeconds(2.0f);
+
+        GameStateManager gameState = GameObject.FindObjectOfType<GameStateManager>();
+        if (gameState) gameState.SetState(GameState.Dialog);
+
+        // 繁荣图渐入
+        _scratchBlurImg.DOFade(_fadeMaxVlue, 2.0f);
+        LayerFadeIn(2.0f); 
+
+        yield return new WaitForSeconds(2.0f);
+
+        // 破败图一渐入
+        yield return new WaitUntil(() => Input.GetMouseButton(0));
+        LayerFadeIn(2.0f);
+        Debug.Log(111);
+        yield return new WaitForSeconds(2.0f);
+
+        // 破败图二渐入
+        yield return new WaitUntil(() => Input.GetMouseButton(0));
+        LayerFadeIn(2.0f);
+        Debug.Log(222);
+        yield return new WaitForSeconds(2.0f);
+
+        // ‘白闪’显示完整破败图
+        yield return new WaitUntil(() => Input.GetMouseButton(0));
+        _fakeLayer.gameObject.SetActive(false);
+        DoFadeImg(_scratchBlurImg, _fadeMinVlue, 0.0f);
+        foreach (var img in _layerImgs)
+        {
+            DoFadeImg(img, _fadeMinVlue, 0.0f);
+        }
+
+        DoFadeImg(_maskImg, _fadeMaxVlue, 0.0f);
+        DoFadeImg(_maskImg, _fadeMinVlue, 3.5f);
+        if (gameState) gameState.SetState(GameState.Normal);
+
+        // 结束
+        yield return new WaitForSeconds(8.0f);
+
+        UIManager.Instance.ShowEndPanel(() => { SceneManager.LoadSceneAsync(3); });
+    }
+
+    private void LayerFadeIn(float duration)
+    {
+        if (_currLayerIndex >= _layerImgs.Count) return;
+
+        _layerImgs[_currLayerIndex].DOFade(_fadeMaxVlue, duration);
+        _currLayerIndex++;
     }
 
     // ════════════════════════════════════════════════════
