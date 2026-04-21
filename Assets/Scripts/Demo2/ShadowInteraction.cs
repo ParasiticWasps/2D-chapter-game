@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(AudioSource))]
 public class ShadowInteraction : MonoBehaviour
 {
     // —— ShadowInteraction ID
@@ -13,20 +14,23 @@ public class ShadowInteraction : MonoBehaviour
 
     // —— 组件 ——
     private SpriteRenderer _spriteRenderer;
-    private BoxCollider2D  _boxCollider;
+    private BoxCollider2D _boxCollider;
+    private AudioSource _audioSource;
 
     // —— UI ——
-    [SerializeField] private Button          _closeButton;
-    [SerializeField] private Image           _maskImg;
-    [SerializeField] private Image           _shadowNoteImg;
+    [SerializeField] private Button _closeButton;
+    [SerializeField] private Image _maskImg;
+    [SerializeField] private Image _shadowNoteImg;
     [SerializeField] private TextMeshProUGUI _shadowNoteText;
+    [SerializeField] private AudioClip _clickedClip;
+    [SerializeField] private AudioClip _interClip;
 
     // —— 内部变量 ——
-    private Tween            _flickerTween;
-    private float            _minFadeValue = 0.0f;
-    private float            _maxFadeValue = 1.0f;
-    private bool             _isSelected = false;
-    private Transform        _player;
+    private Tween _flickerTween;
+    private float _minFadeValue = 0.0f;
+    private float _maxFadeValue = 1.0f;
+    private bool _isSelected = false;
+    private Transform _player;
     private PlayerController _playerCtrl;
 
 
@@ -38,6 +42,10 @@ public class ShadowInteraction : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
         if (_boxCollider == null)
             _boxCollider = gameObject.AddComponent<BoxCollider2D>();
+
+        _audioSource = GetComponent<AudioSource>();
+        _audioSource.playOnAwake = false;
+        _audioSource.loop = false;
 
         InitGUI();
     }
@@ -56,11 +64,13 @@ public class ShadowInteraction : MonoBehaviour
     {
         if (_isSelected) return;
 
+        StartCoroutine(InterAudioPlay());
+
         _isSelected = true;
 
         // 禁用移动
         PlayerController player = TryFindPlayer();
-        player.enabled          = false;
+        player.enabled = false;
 
         // 关闭闪烁Tween
         _flickerTween.Kill();
@@ -69,14 +79,25 @@ public class ShadowInteraction : MonoBehaviour
         _spriteRenderer.DOFade(_maxFadeValue, 0.0f).SetEase(Ease.InOutSine).OnComplete(() => _spriteRenderer.DOFade(_minFadeValue, 2.0f).SetEase(Ease.InOutSine));
 
         // 显示UI
-        _shadowNoteImg? .gameObject.SetActive(true);
-        _maskImg?       .gameObject.SetActive(true);
+        _shadowNoteImg?.gameObject.SetActive(true);
+        _maskImg?.gameObject.SetActive(true);
         _shadowNoteText?.gameObject.SetActive(true);
-        _closeButton?   .gameObject.SetActive(true);
+        _closeButton?.gameObject.SetActive(true);
 
-        _shadowNoteImg? .DOFade(_maxFadeValue, 2.5f);
-        _maskImg?       .DOFade(_maxFadeValue, 2.5f);
+        _shadowNoteImg?.DOFade(_maxFadeValue, 2.5f);
+        _maskImg?.DOFade(_maxFadeValue, 2.5f);
         _shadowNoteText?.DOFade(_maxFadeValue, 2.5f);
+    }
+
+    private IEnumerator InterAudioPlay()
+    {
+        _audioSource.clip = _interClip;
+        _audioSource.Play();
+
+        yield return new WaitUntil(() => !_audioSource.isPlaying);
+
+        _audioSource.clip = _clickedClip;
+        _audioSource.Play();
     }
 
     /// <summary>

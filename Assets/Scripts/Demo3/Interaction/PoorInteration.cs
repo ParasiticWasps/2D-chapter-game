@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class PoorInteration : MonoBehaviour
 {
     public int                         ClickCount= 0;
     public NpcInteraction.NpcInterType InterType = NpcInteraction.NpcInterType.Poor_1;
 
+    [SerializeField] private AudioClip _interClip;
+
     // —— 私有成员 ——
     private int            _currClickCounter = 0;
     private SpriteRenderer _spriteRenderer;
+    private AudioSource    _audioSource;
 
     private const float FADE_MAX_VALUE = 1.0f;
     private const float FADE_MIN_VALUE = 0.1f;
@@ -20,6 +24,10 @@ public class PoorInteration : MonoBehaviour
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         if (_spriteRenderer != null) _spriteRenderer.DOFade(0.0f, 0.0f);
+
+        _audioSource = GetComponent<AudioSource>();
+        _audioSource.loop        = false;
+        _audioSource.playOnAwake = false;
     }
 
     private void Start()
@@ -38,6 +46,10 @@ public class PoorInteration : MonoBehaviour
     {
         PlayerController ctrl = GameObject.FindWithTag("Player")?.GetComponent<PlayerController>();
         if (ctrl) ctrl.enabled = false;
+
+        _audioSource.Stop();
+        _audioSource.clip = _interClip;
+        _audioSource.Play();
 
         // 计算当前 alpha 和每次点击应该增加的 alpha 值
         float currAlpha     = GetCurrentAlpha();

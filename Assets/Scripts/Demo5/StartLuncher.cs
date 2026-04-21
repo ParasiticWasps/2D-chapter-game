@@ -33,7 +33,7 @@ public class StartLuncher : MonoBehaviour
     {
         UIManager.Instance.ReviewGUIInitialized();
 
-        StartCoroutine(Luncher());
+        //StartCoroutine(Luncher());
     }
 
     public IEnumerator Luncher()

@@ -40,6 +40,7 @@ public sealed class UIManager : MonoBehaviour
     [SerializeField] private Image           _reviewImg;
     [SerializeField] private TextMeshProUGUI _asideText;
     [SerializeField] private TextMeshProUGUI _reviewAsideText;
+    [SerializeField] private Image           _endImage;
 
     // —— 私有通用成员 ——
     private const float _fadeMinVlue = 0.0f;
@@ -199,6 +200,8 @@ public sealed class UIManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2.0f);
 
+        BGMManager.Instance.SwitchBGM(BGMManager.BGMMode.Interaction);
+
         GameStateManager gameState = GameObject.FindObjectOfType<GameStateManager>();
         if (gameState) gameState.SetState(GameState.Dialog);
 
@@ -210,16 +213,19 @@ public sealed class UIManager : MonoBehaviour
 
         // 破败图一渐入
         yield return new WaitUntil(() => Input.GetMouseButton(0));
+        InterAudioManager.Instance.PlayInterAudio();
         LayerFadeIn(2.0f);
         yield return new WaitForSeconds(2.0f);
 
         // 破败图二渐入
         yield return new WaitUntil(() => Input.GetMouseButton(0));
+        InterAudioManager.Instance.PlayInterAudio();
         LayerFadeIn(2.0f);
         yield return new WaitForSeconds(2.0f);
 
         // ‘白闪’显示完整破败图
         yield return new WaitUntil(() => Input.GetMouseButton(0));
+        BGMManager.Instance.SwitchBGM(BGMManager.BGMMode.True);
         _fakeLayer.gameObject.SetActive(false);
         _fakeImage.SetActive(false);
         _trueImage.gameObject.SetActive(true);
@@ -284,13 +290,15 @@ public sealed class UIManager : MonoBehaviour
 
     public void ReviewGUIInitialized()
     {
-        _reviewImg      .DOFade(0.0f, 0.0f);
+        _reviewImg.DOFade(0.0f, 0.0f);
+        _endImage.DOFade(0.0f, 0.0f);     
         _reviewAsideText.text = "";
     }    
 
     public IEnumerator StartReview(List<string> asides)
     {
         DoFadeImg(_reviewImg, 1.0f, 2.0f);
+        DoFadeImg(_endImage, 1.0f, 2.0f);
         yield return new WaitForSeconds(2.0f);
         
         yield return StartCoroutine(WordByWordWithLineBreaks(_reviewAsideText, asides, 1.5f));

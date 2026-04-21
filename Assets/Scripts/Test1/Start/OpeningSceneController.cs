@@ -164,6 +164,7 @@ public class OpeningSceneController : MonoBehaviour
         if (audioSource != null && narrationClips != null && lineIndex < narrationClips.Length && narrationClips[lineIndex] != null)
         {
             audioSource.clip = narrationClips[lineIndex];
+            audioSource.volume = 0.2f;
             audioSource.Play();
             Debug.Log($"开始播放第 {lineIndex + 1} 段音频");
         }
@@ -335,7 +336,7 @@ public class OpeningSceneController : MonoBehaviour
         while (elapsedTime < bgmFadeTime)
         {
             elapsedTime += Time.deltaTime;
-            audioSource.volume = Mathf.Lerp(0, 1, elapsedTime / bgmFadeTime);
+            audioSource.volume = Mathf.Lerp(0, 0.3f, elapsedTime / bgmFadeTime);
             yield return null;
         }
     }
