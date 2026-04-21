@@ -133,7 +133,6 @@ public class ChapterEndController : MonoBehaviour
 
         // 1. 画面1.5秒渐暗
         yield return StartCoroutine(FadeScreen(0, 1, fadeInTime));
-        Debug.Log("画面渐暗完成");
 
         // 2. 完全黑屏后短暂停留
         yield return new WaitForSeconds(blackHoldTime);
@@ -160,11 +159,9 @@ public class ChapterEndController : MonoBehaviour
         }
 
         // 5. 停留4秒
-        Debug.Log("文字显示完成，停留4秒");
         yield return new WaitForSeconds(textStayTime);
 
         // 6. 自动结束
-        Debug.Log("章尾结束");
         isEndingActive = false;
 
         // 可选：淡出黑屏或切换到下一场景

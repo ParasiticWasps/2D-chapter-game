@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using DG.Tweening;
 using TMPro;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -19,6 +21,8 @@ public sealed class UIManager : MonoBehaviour
 
     // —— 模糊UI背景和旁白 ——
     [SerializeField] private Image           _blurImage;
+    [SerializeField] private GameObject      _fakeImage;
+    [SerializeField] private GameObject      _trueImage;
     [SerializeField] private TextMeshProUGUI _narrText;
     [SerializeField] private float           _intervalBlurDuration = 3.0f;
 
@@ -29,6 +33,13 @@ public sealed class UIManager : MonoBehaviour
     [SerializeField] private GameObject  _fakeLayer; // 虚假的图层
     private int                          _currLayerIndex = 0;
     private int                          _scratchCount   = 0;
+
+    // —— ‘回顾’ ——
+    [SerializeField] private SelectButton    _fakeButton;
+    [SerializeField] private SelectButton    _trueButton;
+    [SerializeField] private Image           _reviewImg;
+    [SerializeField] private TextMeshProUGUI _asideText;
+    [SerializeField] private TextMeshProUGUI _reviewAsideText;
 
     // —— 私有通用成员 ——
     private const float _fadeMinVlue = 0.0f;
@@ -103,34 +114,50 @@ public sealed class UIManager : MonoBehaviour
     // ════════════════════════════════════════════════════
     //  模糊背景开始旁白
     // ════════════════════════════════════════════════════
-    public void StartBlurAside()
+    //public void StartBlurAside()
+    //{
+    //    StartCoroutine(StartBlurAsideCoroutine());
+    //}
+
+    //private IEnumerator StartBlurAsideCoroutine()
+    //{
+    //    // 循环显示旁白，直到旁白列表显示完毕
+    //    for (int i = 0; i < ASideController.Instance.GetSides().Count; i++)
+    //    {
+    //        yield return new WaitForSeconds(_intervalBlurDuration);
+
+    //        // 开始模糊停止玩家移动
+    //        GameStateManager gameState = GameObject.FindObjectOfType<GameStateManager>();
+    //        if (gameState) gameState.SetState(GameState.Dialog);
+
+    //        // 等待显示第一段旁白
+    //        yield return StartCoroutine(StartBlurFadeIn());
+
+    //        // 等待结束第一段旁白
+    //        yield return StartCoroutine(StartBlurFadeOut());
+
+    //        // 解除玩家移动
+    //        if (gameState) gameState.SetState(GameState.Normal);
+    //    }
+
+    //    // 执行刮开图层的交互
+    //    StartCoroutine(ScratchOffInteraction());
+    //}
+
+    public IEnumerator NextBlurAside()
     {
-        StartCoroutine(StartBlurAsideCoroutine());
-    }
+        // 开始模糊停止玩家移动
+        GameStateManager gameState = GameObject.FindObjectOfType<GameStateManager>();
+        if (gameState) gameState.SetState(GameState.Dialog);
 
-    private IEnumerator StartBlurAsideCoroutine()
-    {
-        // 循环显示旁白，直到旁白列表显示完毕
-        for (int i = 0; i < ASideController.Instance.GetSides().Count; i++)
-        {
-            yield return new WaitForSeconds(_intervalBlurDuration);
+        // 等待显示第一段旁白
+        yield return StartCoroutine(StartBlurFadeIn());
 
-            // 开始模糊停止玩家移动
-            GameStateManager gameState = GameObject.FindObjectOfType<GameStateManager>();
-            if (gameState) gameState.SetState(GameState.Dialog);
+        // 等待结束第一段旁白
+        yield return StartCoroutine(StartBlurFadeOut());
 
-            // 等待显示第一段旁白
-            yield return StartCoroutine(StartBlurFadeIn());
-
-            // 等待结束第一段旁白
-            yield return StartCoroutine(StartBlurFadeOut());
-
-            // 解除玩家移动
-            if (gameState) gameState.SetState(GameState.Normal);
-        }
-
-        // 执行刮开图层的交互
-        StartCoroutine(ScratchOffInteraction());
+        // 解除玩家移动
+        if (gameState) gameState.SetState(GameState.Normal);
     }
 
     private IEnumerator StartBlurFadeIn()
@@ -163,6 +190,11 @@ public sealed class UIManager : MonoBehaviour
     // ════════════════════════════════════════════════════
     //  刮开图层，交互UI
     // ════════════════════════════════════════════════════
+    public void ScratchOff()
+    {
+        StartCoroutine(ScratchOffInteraction());
+    }
+
     private IEnumerator ScratchOffInteraction()
     {
         yield return new WaitForSeconds(2.0f);
@@ -179,18 +211,18 @@ public sealed class UIManager : MonoBehaviour
         // 破败图一渐入
         yield return new WaitUntil(() => Input.GetMouseButton(0));
         LayerFadeIn(2.0f);
-        Debug.Log(111);
         yield return new WaitForSeconds(2.0f);
 
         // 破败图二渐入
         yield return new WaitUntil(() => Input.GetMouseButton(0));
         LayerFadeIn(2.0f);
-        Debug.Log(222);
         yield return new WaitForSeconds(2.0f);
 
         // ‘白闪’显示完整破败图
         yield return new WaitUntil(() => Input.GetMouseButton(0));
         _fakeLayer.gameObject.SetActive(false);
+        _fakeImage.SetActive(false);
+        _trueImage.gameObject.SetActive(true);
         DoFadeImg(_scratchBlurImg, _fadeMinVlue, 0.0f);
         foreach (var img in _layerImgs)
         {
@@ -201,10 +233,7 @@ public sealed class UIManager : MonoBehaviour
         DoFadeImg(_maskImg, _fadeMinVlue, 3.5f);
         if (gameState) gameState.SetState(GameState.Normal);
 
-        // 结束
-        yield return new WaitForSeconds(8.0f);
-
-        UIManager.Instance.ShowEndPanel(() => { SceneManager.LoadSceneAsync(3); });
+        ASideController.Instance.SetTrueGroupEnable(true);
     }
 
     private void LayerFadeIn(float duration)
@@ -213,6 +242,101 @@ public sealed class UIManager : MonoBehaviour
 
         _layerImgs[_currLayerIndex].DOFade(_fadeMaxVlue, duration);
         _currLayerIndex++;
+    }
+
+    // ════════════════════════════════════════════════════
+    //  回顾
+    // ════════════════════════════════════════════════════
+    //public IEnumerator StartAside(List<string> texts, float liveDuation)
+    //{
+    //    foreach (var text in texts)
+    //    {
+    //        _asideText.text = "";
+    //        _asideText.DOFade(_fadeMaxVlue, 0.0f);
+
+    //        yield return StartCoroutine(WordByWord(_asideText, text));
+
+    //        _asideText.DOFade(_fadeMinVlue, 3.0f);
+    //        yield return new WaitForSeconds(3.0f);
+    //    }
+    //}
+
+    //public IEnumerator StartReview(Sprite sprite, List<string> asides)
+    //{
+    //    _reviewImg.DOFade(_fadeMinVlue, 0.0f);
+    //    _reviewImg.sprite = sprite;
+    //    _reviewImg.DOFade(_fadeMaxVlue, 3.0f);
+
+    //    yield return new WaitForSeconds(2.5f);
+
+    //    for (int i = 0; i < asides.Count; ++i)
+    //    {
+    //        _reviewAsideText.text = "";
+    //        _reviewAsideText.DOFade(_fadeMaxVlue, 0.0f);
+    //        yield return StartCoroutine(WordByWord(_reviewAsideText, asides[i]));
+    //        _reviewAsideText.DOFade(_fadeMinVlue, 2.0f);
+    //        yield return new WaitForSeconds(2.0f);
+    //    }
+
+    //    _reviewImg.DOFade(_fadeMaxVlue, 2.0f);
+    //    yield return new WaitForSeconds(2.0f);
+    //}
+
+    public void ReviewGUIInitialized()
+    {
+        _reviewImg      .DOFade(0.0f, 0.0f);
+        _reviewAsideText.text = "";
+    }    
+
+    public IEnumerator StartReview(List<string> asides)
+    {
+        DoFadeImg(_reviewImg, 1.0f, 2.0f);
+        yield return new WaitForSeconds(2.0f);
+        
+        yield return StartCoroutine(WordByWordWithLineBreaks(_reviewAsideText, asides, 1.5f));
+
+        yield return new WaitForSeconds(1.0f);
+
+        _fakeButton.FadeIn();
+        _trueButton.FadeIn();
+    }
+
+    public IEnumerator ReviewFinish()
+    {
+        _fakeButton.FadeOut();
+        _trueButton.FadeOut();
+
+        _reviewAsideText.DOFade(0.0f, 2.0f).OnComplete(() => { _reviewAsideText.text = ""; });
+        DoFadeImg(_reviewImg, 0.0f, 2.0f);
+        yield return new WaitForSeconds(2.5f);
+
+        yield return null;
+    }
+
+    public IEnumerator SelectTextCoroutine(string text)
+    {
+        _reviewAsideText.DOFade(1.0f, 0.0f);
+
+        yield return StartCoroutine(WordByWord(_reviewAsideText, text));
+
+        yield return null;
+    }
+
+    public IEnumerator SelectFinished(List<string> asides)
+    {
+        _reviewAsideText.DOFade(0.0f, 2.0f).OnComplete(() => { _reviewAsideText.text = ""; });
+
+        yield return new WaitForSeconds(2.5f);
+
+        yield return StartCoroutine(WordByWordWithLineBreaks(_asideText, asides, 1.0f));
+
+        yield return new WaitForSeconds(4.5f);
+        _asideText.DOFade(0.0f, 2.5f);
+
+        yield return new WaitForSeconds(2.5F);
+
+        _asideText.DOFade(1.0f, 0.0f);
+        yield return StartCoroutine(WordByWord(_asideText, "完结。"));
     }
 
     // ════════════════════════════════════════════════════
@@ -226,10 +350,29 @@ public sealed class UIManager : MonoBehaviour
 
     private IEnumerator WordByWord(TextMeshProUGUI t, string words)
     {
+        t.text = "";
         foreach (var word in words)
         {
             t.text += word;
             yield return new WaitForSeconds(0.05f);
+        }
+        yield return null;
+    }
+
+    private IEnumerator WordByWordWithLineBreaks(TextMeshProUGUI t, List<string> sentences, float lineDuration)
+    {
+        t.text               = "";
+        t.enableWordWrapping = true;
+        t.overflowMode       = TextOverflowModes.Overflow;
+        foreach (var s in sentences)
+        {
+            foreach (var w in s)
+            {
+                t.text += w;
+                yield return new WaitForSeconds(0.05f);
+            }
+            t.text += "\n";
+            yield return new WaitForSeconds(lineDuration);
         }
         yield return null;
     }
