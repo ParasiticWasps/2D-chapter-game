@@ -336,7 +336,7 @@ public class OpeningSceneController : MonoBehaviour
         while (elapsedTime < bgmFadeTime)
         {
             elapsedTime += Time.deltaTime;
-            audioSource.volume = Mathf.Lerp(0, 0.3f, elapsedTime / bgmFadeTime);
+            audioSource.volume = Mathf.Lerp(0, 0.15f, elapsedTime / bgmFadeTime);
             yield return null;
         }
     }

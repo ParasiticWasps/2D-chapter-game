@@ -480,8 +480,8 @@ MonoBehaviour:
   _maskImg: {fileID: 1905392714}
   _shadowNoteImg: {fileID: 1735571115}
   _shadowNoteText: {fileID: 1967536507}
-  _clickedClip: {fileID: 8300000, guid: b6d9be0aee659d7458c8012c89649f65, type: 3}
-  _interClip: {fileID: 8300000, guid: b555641af73897446bb5030bdfd5b9df, type: 3}
+  _clickedClip: {fileID: 8300000, guid: b555641af73897446bb5030bdfd5b9df, type: 3}
+  _interClip: {fileID: 8300000, guid: b6d9be0aee659d7458c8012c89649f65, type: 3}
 --- !u!61 &241099953
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4281,8 +4281,8 @@ MonoBehaviour:
   _maskImg: {fileID: 1408818132}
   _shadowNoteImg: {fileID: 915004192}
   _shadowNoteText: {fileID: 2129820525}
-  _clickedClip: {fileID: 8300000, guid: b6d9be0aee659d7458c8012c89649f65, type: 3}
-  _interClip: {fileID: 8300000, guid: a7d08107cbac6534eb6ea0d6d8a2f6b6, type: 3}
+  _clickedClip: {fileID: 8300000, guid: a7d08107cbac6534eb6ea0d6d8a2f6b6, type: 3}
+  _interClip: {fileID: 8300000, guid: b6d9be0aee659d7458c8012c89649f65, type: 3}
 --- !u!61 &1435476030
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5111,8 +5111,8 @@ MonoBehaviour:
   _maskImg: {fileID: 1112591839}
   _shadowNoteImg: {fileID: 1188998348}
   _shadowNoteText: {fileID: 1601370957}
-  _clickedClip: {fileID: 8300000, guid: b6d9be0aee659d7458c8012c89649f65, type: 3}
-  _interClip: {fileID: 8300000, guid: 622f9b19d21ce964aa09ae213b87519f, type: 3}
+  _clickedClip: {fileID: 8300000, guid: 622f9b19d21ce964aa09ae213b87519f, type: 3}
+  _interClip: {fileID: 8300000, guid: b6d9be0aee659d7458c8012c89649f65, type: 3}
 --- !u!61 &1705688402
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -6292,7 +6292,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0
   m_Pitch: 1
   Loop: 0
   Mute: 0

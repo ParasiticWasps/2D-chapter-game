@@ -91,12 +91,12 @@ public class ShadowInteraction : MonoBehaviour
 
     private IEnumerator InterAudioPlay()
     {
-        _audioSource.clip = _interClip;
+        _audioSource.clip = _clickedClip;
         _audioSource.Play();
 
         yield return new WaitUntil(() => !_audioSource.isPlaying);
 
-        _audioSource.clip = _clickedClip;
+        _audioSource.clip = _interClip;
         _audioSource.Play();
     }
 

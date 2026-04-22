@@ -35,12 +35,15 @@ public sealed class UIManager : MonoBehaviour
     private int                          _scratchCount   = 0;
 
     // —— ‘回顾’ ——
+    [SerializeField] private Image           _reviewImg;
+    [SerializeField] private Image           _endImage;
+    [SerializeField] private Image           _flashImg;
+    [SerializeField] private Image           _sceneReviewImg;
     [SerializeField] private SelectButton    _fakeButton;
     [SerializeField] private SelectButton    _trueButton;
-    [SerializeField] private Image           _reviewImg;
     [SerializeField] private TextMeshProUGUI _asideText;
     [SerializeField] private TextMeshProUGUI _reviewAsideText;
-    [SerializeField] private Image           _endImage;
+    [SerializeField] private TextMeshProUGUI _sceneReviewText;
 
     // —— 私有通用成员 ——
     private const float _fadeMinVlue = 0.0f;
@@ -60,13 +63,15 @@ public sealed class UIManager : MonoBehaviour
         _endMaskImg?.DOFade(_fadeMinVlue, 0.0f).OnComplete(() => _endMaskImg.gameObject.SetActive(false));
         _blurImage?.DOFade(_fadeMinVlue, 0.0f);
         _scratchBlurImg?.DOFade(_fadeMinVlue, 0.0f);
+        _flashImg?.DOFade(_fadeMinVlue, 0.0f);
+        _sceneReviewImg?.DOFade(_fadeMinVlue, 0.0f);
         foreach (var img in _layerImgs)
         {
             img?.DOFade(_fadeMinVlue, 0.0f);
         }
 
-        _endText.text  = string.Empty;
-        _narrText.text = string.Empty;
+        if (_endText != null) _endText.text  = string.Empty;
+        if (_narrText != null) _narrText.text = string.Empty;
     }
 
     // ==================
@@ -345,6 +350,36 @@ public sealed class UIManager : MonoBehaviour
 
         _asideText.DOFade(1.0f, 0.0f);
         yield return StartCoroutine(WordByWord(_asideText, "完结。"));
+    }
+
+    public void SetSceneReviewText(List<string> sides, float lineDurtion)
+    {
+        StartCoroutine(SetSceneTextCoroutine(sides, lineDurtion));
+    }
+
+    public IEnumerator SetSceneTextCoroutine(List<string> sides, float lineDurtion)
+    {
+        _sceneReviewText.DOFade(1.0f, 0.0f);
+        _sceneReviewImg .DOFade(1.0f, 1.0f);
+        yield return StartCoroutine(WordByWordWithLineBreaks(_sceneReviewText, sides, lineDurtion));
+
+        _sceneReviewImg .DOFade(0.0f, 1.0f);
+        _sceneReviewText.DOFade(0.0f, 1.0f);
+    }
+
+    public void Flash(float duration, Action callback)
+    {
+        StartCoroutine(FlashCoroutine(duration, callback));
+    }
+
+    private IEnumerator FlashCoroutine(float duration, Action callback)
+    {
+        _flashImg.DOFade(_fadeMaxVlue, 0.0f);
+        _flashImg.DOFade(_fadeMinVlue, duration);
+
+        yield return new WaitForSeconds(1.5f);
+
+        callback?.Invoke();
     }
 
     // ════════════════════════════════════════════════════
