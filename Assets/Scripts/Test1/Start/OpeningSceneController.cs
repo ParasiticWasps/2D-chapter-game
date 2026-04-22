@@ -3,9 +3,21 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Events;
 using TMPro;
+using DG.Tweening;
 
 public class OpeningSceneController : MonoBehaviour
 {
+    private static OpeningSceneController _instance;
+
+    public static OpeningSceneController Get()
+    {
+        if (_instance == null )
+        {
+            _instance = FindObjectOfType<OpeningSceneController>(true);
+        }
+        return _instance;
+    }
+
     [Header("UI组件")]
     public Image blackScreen;           // 黑屏遮罩
     public TextMeshProUGUI narrationText;          // 旁白文本
@@ -113,6 +125,11 @@ public class OpeningSceneController : MonoBehaviour
     {
         // 初始黑屏（2秒）
         yield return new WaitForSeconds(2f);
+
+        if (backgroundMusic != null && audioSource != null)
+        {
+            StartCoroutine(FadeInBGM());
+        }
 
         // 开始播放第一句旁白
         yield return StartCoroutine(PlayNextNarration());
@@ -235,10 +252,10 @@ public class OpeningSceneController : MonoBehaviour
         }
 
         // 播放背景音乐（淡入）
-        if (backgroundMusic != null && audioSource != null)
-        {
-            StartCoroutine(FadeInBGM());
-        }
+        //if (backgroundMusic != null && audioSource != null)
+        //{
+        //    StartCoroutine(FadeInBGM());
+        //}
 
         // 显示内心独白
         if (!string.IsNullOrEmpty(innerMonologueLine) && innerMonologueText != null)
@@ -339,6 +356,12 @@ public class OpeningSceneController : MonoBehaviour
             audioSource.volume = Mathf.Lerp(0, 0.15f, elapsedTime / bgmFadeTime);
             yield return null;
         }
+    }
+
+    public void FadeOut(float duration)
+    {
+        DOTween.To(() => audioSource.volume, x => { audioSource.volume = x; }, 0.0f, duration).SetEase(Ease.InOutQuad)
+            .OnComplete(() => audioSource.Stop());
     }
 
     public void SkipOpening()

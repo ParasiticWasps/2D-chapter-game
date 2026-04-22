@@ -37,7 +37,7 @@ public class ShadowManager : MonoBehaviour
                 PlayerController _ctrl = go.GetComponent<PlayerController>();
                 _ctrl.enabled          = false;
 
-                UIManager.Instance.ShowEndPanel(() => { SceneManager.LoadSceneAsync(2); });
+                UIManager.Instance.ShowEndPanel(() => { SceneManager.LoadSceneAsync(3); });
             }
         }
     }

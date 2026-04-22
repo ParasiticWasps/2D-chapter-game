@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using TMPro;
+using DG.Tweening;
 
 public class ChapterEndController : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class ChapterEndController : MonoBehaviour
 
     [Header("初始状态")]
     public bool initializeOnStart = false; // 是否在Start时初始化（默认false）
+    public OpeningSceneController opening;
 
     private bool isEndingActive = false;   // 结尾是否正在播放
     private Coroutine endingCoroutine;     // 结尾协程引用
@@ -158,6 +160,8 @@ public class ChapterEndController : MonoBehaviour
             yield return StartCoroutine(TypeText(endingLine2));
         }
 
+        opening?.FadeOut(3.0f);
+
         // 5. 停留4秒
         yield return new WaitForSeconds(textStayTime);
 
@@ -168,10 +172,10 @@ public class ChapterEndController : MonoBehaviour
         if (autoLoadNextScene && !string.IsNullOrEmpty(nextSceneName))
         {
             // 淡出黑屏（可选）
-            yield return StartCoroutine(FadeScreen(1, 0, 1f));
+            //yield return StartCoroutine(FadeScreen(1, 0, 3f));
 
             // 加载下一场景
-            SceneManager.LoadSceneAsync(1);
+            SceneManager.LoadSceneAsync(nextSceneName);
         }
     }
 
@@ -228,6 +232,13 @@ public class ChapterEndController : MonoBehaviour
             yield return null;
         }
     }
+
+    public void FadeOut(float duration)
+    {
+        DOTween.To(() => audioSource.volume, x => { audioSource.volume = x; }, 0.0f, duration).SetEase(Ease.InOutQuad)
+            .OnComplete(() => audioSource.Stop());
+    }
+
 
     // 公开方法：手动跳过结尾（可选）
     public void SkipEnding()

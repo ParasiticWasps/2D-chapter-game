@@ -53,7 +53,7 @@ public class PoorManager : MonoBehaviour
             PlayerController _ctrl = go.GetComponent<PlayerController>();
             _ctrl.enabled = false;
 
-            UIManager.Instance.ShowEndPanel(() => { SceneManager.LoadSceneAsync(3); });
+            UIManager.Instance.ShowEndPanel(() => { SceneManager.LoadSceneAsync(4); });
         }
     }
 }

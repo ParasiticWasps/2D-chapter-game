@@ -59,7 +59,7 @@ public class ASideController : MonoBehaviour
             if (inter == null || inter.GetIsTrigger() == false) return;
         }
 
-        UIManager.Instance.ShowEndPanel(() => { SceneManager.LoadSceneAsync(4); });
+        UIManager.Instance.ShowEndPanel(() => { SceneManager.LoadSceneAsync(5); });
     }
 
     public List<string> GetSides() => _sides;

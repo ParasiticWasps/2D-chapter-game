@@ -290,6 +290,7 @@ MonoBehaviour:
   nextSceneName: 
   autoLoadNextScene: 1
   initializeOnStart: 1
+  opening: {fileID: 0}
 --- !u!1 &75833624
 GameObject:
   m_ObjectHideFlags: 0
@@ -3610,7 +3611,7 @@ Transform:
   m_GameObject: {fileID: 1048956579}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.79, y: 0, z: 0}
+  m_LocalPosition: {x: -0.66, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4109,7 +4110,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1221684416}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 37e1bc4239b3cf845bf8dfe43b69cc72, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 1fb4e335b9d5ef341b14d5c59cf4b338, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -7571,6 +7572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2102775058}
   - component: {fileID: 2102775059}
+  - component: {fileID: 2102775060}
   m_Layer: 0
   m_Name: BGM
   m_TagString: Untagged
@@ -7604,7 +7606,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: a1b9fc059cf8da44ead87618e8940821, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
@@ -7689,6 +7691,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2102775060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102775057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b131502193c4984186d38460482cf7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _clip: {fileID: 8300000, guid: a1b9fc059cf8da44ead87618e8940821, type: 3}
 --- !u!1 &2110166121
 GameObject:
   m_ObjectHideFlags: 0

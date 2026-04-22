@@ -102,6 +102,10 @@ public sealed class UIManager : MonoBehaviour
             yield return new WaitForSeconds(2.0f);
         }
 
+        OpeningSceneController.Get().FadeOut(3.0f);
+
+        yield return new WaitForSeconds(3.0f);
+
         callback?.Invoke();
     }
 
@@ -350,6 +354,8 @@ public sealed class UIManager : MonoBehaviour
 
         _asideText.DOFade(1.0f, 0.0f);
         yield return StartCoroutine(WordByWord(_asideText, "完结。"));
+
+        BGMContorller.Get().FadeOut();
     }
 
     public void SetSceneReviewText(List<string> sides, float lineDurtion)
